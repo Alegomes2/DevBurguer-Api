@@ -18,7 +18,7 @@ module.exports = {
         allowNull: false,
         unique: true, // unique --> propriedade que não permite criar usuario com email repetido
        },
-       passoword_hash: {
+       password_hash: {
         type: Sequelize.STRING,
         allowNull: false
        },
