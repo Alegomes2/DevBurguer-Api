@@ -7,37 +7,66 @@ show --> lista um usuario ou dado especifico
 update --> atualiza os dados 
 delete --> deleta os dados
 */
-import { v4 } from 'uuid'
+
+import * as Yup from 'yup'
+import { v4 as uuidv4 } from 'uuid'
 import User from '../models/User.js'
+import bcrypt from 'bcrypt'
 
 class UserController {
-    async store(request, response){
-        const { name, email, password_hash, admin } = request.body
+  async store(request, response) {
+    const schema = Yup.object({
+      name: Yup.string().required(),
+      email: Yup.string().email().required(),
+      password: Yup.string().min(6).required(),
+      admin: Yup.boolean(),
+    })
 
-        const existingUser = await User.findOne({
-            where:{
-                email
-            }
-        })
-        if(existingUser){
-            return response.status(400).json({message: "Este e-mail ja está cadastrado"})
-        }
+    try {
+      // validação
+      await schema.validate(request.body, {
+        abortEarly: false, strict: true
+      })
 
-    const user = await User.create({
-        id: v4(),
+      const { name, email, password, admin } = request.body
+
+      // verifica se email já existe
+      const existingUser = await User.findOne({
+        where: { email },
+      })
+
+      if (existingUser) {
+        return response
+          .status(400)
+          .json({ message: 'Email already taken!' })
+      }
+
+      // criando senha criptografada,  aumentando a segurança
+      password_hash =  await bcrypt.hash(password, 10)
+
+      // cria usuário
+      const user = await User.create({
+        id: uuidv4(),
         name,
         email,
         password_hash,
-        admin
-    })
+        admin,
+      })
 
-    return response.status(201).json({
+      return response.status(201).json({
         id: user.id,
         name: user.name,
         email: user.email,
-        admin: user.admin
-    });
+        admin: user.admin,
+      })
+    } catch (error) {
+      return response.status(400).json({
+        error: 'Validation fails',
+        messages: error.errors,
+      })
     }
+  }
 }
 
-export default new UserController();
+export default new UserController()
+
