@@ -13,9 +13,9 @@ class ProductController {
         } catch (err) {
             return response.status(400).json({ error: err.erros })
         }
-        
+
         return response.status(201).json({ ok: true})
     }
 }
 
-export default new ProductController
+export default new ProductController()
