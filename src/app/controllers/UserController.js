@@ -42,7 +42,7 @@ class UserController {
       }
 
       // criando senha criptografada,  aumentando a segurança
-      password_hash =  await bcrypt.hash(password, 10)
+      const password_hash =  await bcrypt.hash(password, 10)
 
       // cria usuário
       const user = await User.create({
