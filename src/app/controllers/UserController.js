@@ -37,7 +37,7 @@ class UserController {
 
       if (existingUser) {
         return response
-          .status(400)
+          .status(409)
           .json({ message: 'Email already taken!' })
       }
 
