@@ -2,6 +2,8 @@
 
 require("dotenv").config();
 
+const caCertificate = process.env.DB_CA_CERT?.replace(/\\n/g, "\n");
+
 const databaseConfig = {
   dialect: "postgres",
 
@@ -31,13 +33,13 @@ module.exports = {
   },
 
   production: {
-    ...databaseConfig,
-
-    dialectOptions: {
-      ssl: {
-        require: true,
-        rejectUnauthorized: true,
-      },
+  ...databaseConfig,
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: true,
+      ca: caCertificate,
     },
   },
+},
 };
