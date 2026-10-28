@@ -9,11 +9,13 @@ class Product extends Model {
         path: Sequelize.STRING,
         offer: Sequelize.BOOLEAN,
         url: {
-          type: Sequelize.VIRTUAL,
-          get() {
-            return `http://localhost:3001/product-file/${this.path}`
-          },
-        },
+  type: Sequelize.VIRTUAL,
+  get() {
+    const apiUrl = process.env.API_URL || 'http://localhost:3001'
+
+    return `${apiUrl}/product-file/${this.path}`
+  },
+},
       },
       {
         sequelize,
